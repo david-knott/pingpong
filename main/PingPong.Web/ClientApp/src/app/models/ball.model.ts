@@ -1,5 +1,7 @@
 import { GameObject } from "./game-object.model";
 import { BoundingBox } from "./bounding-box.model";
+import { MoveEvent } from "./move-event.model";
+
 
 export class Ball extends GameObject {
   
@@ -17,7 +19,16 @@ export class Ball extends GameObject {
     this.width = 20;
     this.height = 20;
     this.velocityX = 4;
-    this.velocityY = 4;
+    this.velocityY = 4; 
+  }
+
+  move() {
+    this.x += this.getVelocityX();
+    this.y += this.getVelocityY();
+    this.onMove.trigger(
+        new MoveEvent(
+      this.x,
+      this.y));
   }
 
   reboundX() {
@@ -45,14 +56,11 @@ export class Ball extends GameObject {
   }
 
   onCollision(go: GameObject): void {
-    console.log('ball collision @ (' + this.x + ',' + this.y + ') with ' + go.getName());
     this.reboundX();
   }
 
   draw(ticks: number, context: CanvasRenderingContext2D) {
    // context.save();
-    this.x += this.getVelocityX();
-    this.y += this.getVelocityY();
     context.fillRect(this.x /*x*/, this.y /*y*/, this.width/*w*/, this.height/*h*/);
    // context.restore();
   }

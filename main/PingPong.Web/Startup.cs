@@ -1,3 +1,4 @@
+using main.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -5,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.
 namespace main
 {
     public class Startup
@@ -27,7 +27,19 @@ namespace main
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+            
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.WithOrigins("https://localhost:5001")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
             services.AddSignalR();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,7 +58,11 @@ namespace main
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
+            app.UseCors("CorsPolicy");
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<GameHub>("/chart");
+            });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -64,10 +80,6 @@ namespace main
                 {
                     spa.UseAngularCliServer(npmScript: "start");
                 }
-            });
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<ChatHub>("/chatHub");
             });
         }
     }

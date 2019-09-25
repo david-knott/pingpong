@@ -23,22 +23,22 @@ var Court = /** @class */ (function (_super) {
         _this.height = 580;
         return _this;
     }
+    Court.prototype.move = function () {
+    };
     Court.prototype.getBoundingBox = function () {
         return new bounding_box_model_1.BoundingBox(10, 0, 100, 100);
     };
     Court.prototype.onCollision = function (go) {
-        console.log('court collision with ' + go.getName());
+        //    console.log('court collision with ' + go.getName());
     };
     Court.prototype.getName = function () {
         return "Court";
     };
     Court.prototype.draw = function (ticks, context) {
-        //   context.save();
         context.beginPath();
         context.fillRect(0, 0, 1, this.height + 20);
         context.rect(0 /*x*/, 0 /*y*/, this.width + 20, this.height + 20);
         context.stroke();
-        // context.restore();
     };
     return Court;
 }(game_object_model_1.GameObject));

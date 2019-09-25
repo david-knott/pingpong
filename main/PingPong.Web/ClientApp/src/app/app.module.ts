@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
+import { SignalRService } from './services/signal-r.service';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import { HomeComponent } from './home/home.component';
       { path: '', component: HomeComponent, pathMatch: 'full' }
     ])
   ],
-  providers: [],
+  providers: [SignalRService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -20,6 +20,16 @@ export class GameEnv {
     this.gameObjects = new Array<GameObject>();
   }
 
+  /**
+   * Stores a reference to game object. This is used
+   * for collision detection and for redrawing the objects
+   * in the main game loop.
+   * @param gameObject
+   */
+  private registerGameObject(gameObject: GameObject) {
+    this.gameObjects.push(gameObject);
+  }
+
   setBat1(bat1: Bat): void {
     this.bat1 = bat1;
     this.registerGameObject(this.bat1);
@@ -28,6 +38,10 @@ export class GameEnv {
   setBat2(bat2: Bat): void {
     this.bat2 = bat2;
     this.bat2.x = 780;
+    //make bat2 follow the ball
+    this.ball.moved.on((ge) => {
+      this.bat2.y = ge.y;
+   });
     this.registerGameObject(this.bat2);
   }
 
@@ -58,10 +72,9 @@ export class GameEnv {
     }
   }
 
-  private registerGameObject(gameObject: GameObject) {
-    this.gameObjects.push(gameObject);
-  }
-
+  /**
+   * Detects collisions between 2 game objects. Uses bounding rectangles
+   **/
   detectCollisions(): void {
     for (let i = 1; i < this.gameObjects.length; i++) {
       for (let j = i + 1; j < this.gameObjects.length; j++) {
@@ -70,25 +83,38 @@ export class GameEnv {
         if (one === null || two === null)
           continue;
         if (one.collides(two)) {
-            this.gameObjects[i].onCollision(this.gameObjects[j]);
-          }
+          this.gameObjects[i].onCollision(this.gameObjects[j]);
+        }
       }
     }
   }
 
   /**
-   * Main game loop.
+   * Move game loop.
    * @param ticks
    */
-  loop(ticks: number, canvas: any, context: CanvasRenderingContext2D): void {
-    context.save();
-    context.setTransform(1, 0, 0, 1, 0, 0);
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.restore();
+  public moveLoop(ticks: number): void {
     this.keepBallInCourt();
     this.detectCollisions();
     this.gameObjects.forEach((go) => {
+      go.move();
+    });
+
+
+  }
+
+  /**
+   * Draw game loop.
+   * @param ticks
+   */
+  public drawLoop(ticks: number, canvas: any, context: CanvasRenderingContext2D): void {
+  //  context.save();
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  //  context.restore();
+    this.gameObjects.forEach((go) => {
       go.draw(ticks, context);
+  
     });
   }
 }

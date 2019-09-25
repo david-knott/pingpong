@@ -15,6 +15,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var game_object_model_1 = require("./game-object.model");
 var bounding_box_model_1 = require("./bounding-box.model");
+var move_event_model_1 = require("./move-event.model");
 var Ball = /** @class */ (function (_super) {
     __extends(Ball, _super);
     function Ball() {
@@ -27,6 +28,11 @@ var Ball = /** @class */ (function (_super) {
         _this.velocityY = 4;
         return _this;
     }
+    Ball.prototype.move = function () {
+        this.x += this.getVelocityX();
+        this.y += this.getVelocityY();
+        this.onMove.trigger(new move_event_model_1.MoveEvent(this.x, this.y));
+    };
     Ball.prototype.reboundX = function () {
         this.velocityX = this.velocityX * -1;
     };
@@ -46,13 +52,10 @@ var Ball = /** @class */ (function (_super) {
         return new bounding_box_model_1.BoundingBox(this.x, this.y, this.width, this.height);
     };
     Ball.prototype.onCollision = function (go) {
-        console.log('ball collision @ (' + this.x + ',' + this.y + ') with ' + go.getName());
         this.reboundX();
     };
     Ball.prototype.draw = function (ticks, context) {
         // context.save();
-        this.x += this.getVelocityX();
-        this.y += this.getVelocityY();
         context.fillRect(this.x /*x*/, this.y /*y*/, this.width /*w*/, this.height /*h*/);
         // context.restore();
     };

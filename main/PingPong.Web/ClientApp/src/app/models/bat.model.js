@@ -23,7 +23,7 @@ var Bat = /** @class */ (function (_super) {
         _this.y = 100;
         _this.width = 20;
         _this.height = 100;
-        _this.velocityY = 25;
+        _this.velocityY = 0;
         return _this;
     }
     Bat.prototype.draw = function (ticks, context) {
@@ -34,21 +34,23 @@ var Bat = /** @class */ (function (_super) {
     Bat.prototype.getBoundingBox = function () {
         return new bounding_box_model_1.BoundingBox(this.x, this.y, this.width, this.height);
     };
-    Bat.prototype.moveUp = function () {
-        if (this.y < 0)
-            this.y = 0;
-        else if (this.y > 500)
+    Bat.prototype.move = function () {
+        if (this.y > 500)
             this.y = 500;
-        else
-            this.y -= this.velocityY;
+        else if (this.y < 0)
+            this.y = 0;
+        else {
+            this.y += this.velocityY;
+        }
+    };
+    Bat.prototype.moveUp = function () {
+        this.velocityY = -9;
     };
     Bat.prototype.moveDown = function () {
-        if (this.y < 0)
-            this.y = 0;
-        else if (this.y > 500)
-            this.y = 500;
-        else
-            this.y += this.velocityY;
+        this.velocityY = +9;
+    };
+    Bat.prototype.stop = function () {
+        this.velocityY = 0;
     };
     Bat.prototype.getName = function () {
         return "Bat";

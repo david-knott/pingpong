@@ -8,6 +8,15 @@ var GameEnv = /** @class */ (function () {
         this.playerTwoScore = 0;
         this.gameObjects = new Array();
     }
+    /**
+     * Stores a reference to game object. This is used
+     * for collision detection and for redrawing the objects
+     * in the main game loop.
+     * @param gameObject
+     */
+    GameEnv.prototype.registerGameObject = function (gameObject) {
+        this.gameObjects.push(gameObject);
+    };
     GameEnv.prototype.setBat1 = function (bat1) {
         this.bat1 = bat1;
         this.registerGameObject(this.bat1);
@@ -15,6 +24,10 @@ var GameEnv = /** @class */ (function () {
     GameEnv.prototype.setBat2 = function (bat2) {
         this.bat2 = bat2;
         this.bat2.x = 780;
+        //make bat2 follow the ball
+        //   this.ball.moved.on((ge) => {
+        //   this.bat2.y = ge.y;
+        //  });
         this.registerGameObject(this.bat2);
     };
     GameEnv.prototype.setCourt = function (court) {
@@ -41,9 +54,9 @@ var GameEnv = /** @class */ (function () {
             this.ball.reboundY();
         }
     };
-    GameEnv.prototype.registerGameObject = function (gameObject) {
-        this.gameObjects.push(gameObject);
-    };
+    /**
+     * Detects collisions between 2 game objects. Uses bounding rectangles
+     **/
     GameEnv.prototype.detectCollisions = function () {
         for (var i = 1; i < this.gameObjects.length; i++) {
             for (var j = i + 1; j < this.gameObjects.length; j++) {
@@ -58,18 +71,25 @@ var GameEnv = /** @class */ (function () {
         }
     };
     /**
-     * Main game loop.
+     * Move game loop.
      * @param ticks
      */
-    GameEnv.prototype.loop = function (ticks, canvas, context) {
-        context.save();
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.restore();
+    GameEnv.prototype.moveLoop = function (ticks) {
         this.keepBallInCourt();
         this.detectCollisions();
+    };
+    /**
+     * Draw game loop.
+     * @param ticks
+     */
+    GameEnv.prototype.drawLoop = function (ticks, canvas, context) {
+        //  context.save();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        //  context.restore();
         this.gameObjects.forEach(function (go) {
             go.draw(ticks, context);
+            go.move();
         });
     };
     return GameEnv;
